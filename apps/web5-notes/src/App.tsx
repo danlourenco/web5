@@ -1,37 +1,58 @@
+import { useState, useEffect } from 'react';
 import useWeb5 from "./hooks/useWeb5";
-import { useState } from 'react';
+import Pane from "./components/Pane";
 
-const mockNotes = [
-  {
-    id: 1,
-    text: 'Note 1'
-  },
-  {
-    id: 2,
-    text: 'Note 2'
-  },
-  {
-    id: 3,
-    text: 'Dear Diary'
-  },
-]
-function Pane({ notes = mockNotes }) {
-
-  const noteItems = notes.map(note =>
-    <li key={note.id} className=" bg-gray-300 h-8 py-2 px-1">{note.text}</li>);
-  return (
-    <div className="bg-gray-200 flex-2 p-4 w-1/3 border-r border-gray-300">
-      <ul>
-        {noteItems}
-      </ul>
-    </div>
-  )
-}
 function App() {
   const { web5, did } = useWeb5();
   const [noteText, setNoteText] = useState('');
-  const handleTextChange = (e) => setNoteText(e.target.value);
-  const handleSaveNote = () => console.log('note saved!');
+  // const notesArray = [];
+  const [notes, updateNotes] = useState([]);
+
+  const initialize = async (web5) => {
+    if (!web5) return;
+    const response = await web5.dwn.records.query({
+      message: {
+        filter: {
+          schema: 'http://some-schema-registry.org/notes'
+        },
+        dateSort: 'createdAscending'
+      }
+    });
+
+    updateNotes(
+      response.records
+    );
+    console.log(notes);
+
+    // response.records.forEach(record => {
+    //   // notesArray.push(record)
+    //   updateNotes( record => [])
+    // })
+  }
+
+  useEffect(() => {
+    initialize(web5);
+    console.log('useEffect called')
+  }, [])
+
+  const saveNote = async (noteData, web5Instance, destinationArray) => {
+    const { record } = await web5Instance.dwn.records.create({
+      data: noteData,
+      message: {
+        schema: 'http://some-schema-registry.org/notes',
+        dataFormat: 'text/plain'
+      }
+    });
+
+    const data = await record.data.text();
+    const note = { record, data, id: record.id };
+    destinationArray.push(note);
+    console.log(note)
+  }
+  const handleTextChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => setNoteText(value);
+  const handleSaveNote = async () => {
+    await saveNote(noteText, web5, notes);
+  }
   const handleDeleteNote = () => console.log('note deleted!!');
 
   return (
@@ -40,13 +61,13 @@ function App() {
         Web 5 Notes
       </h1>
       <section className="flex h-[500px]">
-        <Pane />
+        <Pane notes={notes} />
         {/* <!-- Right Pane --> */}
         <div className="bg-blue-100 flex-1 p-4">
           {/* <!-- Toolbar Pane - should be menu element --> */}
-          <menu className="flex flex-row-reverse">
-            <li><button title="New Note" className="bg-white rounded-sm m-2 p-2 h-8 w-8" onClick={handleSaveNote}>📄</button></li>
-            <li><button title="Delete Note" className="bg-white rounded-sm m-2 h-8 w-8 p-2" onClick={handleDeleteNote}>🗑️</button></li>
+          <menu className="flex flex-row-reverse bg-white rounded-sm shadow-sm">
+            <li><button title="Save " className="bg-blue-300 rounded-sm" onClick={handleSaveNote}>Save</button></li>
+            <li><button title="Delete " className="bg-red-200 rounded-sm" onClick={handleDeleteNote}>Delete</button></li>
           </menu>
           <textarea className="w-full border-gray-700 border-2 rounded-md p-4" onChange={handleTextChange} value={noteText} />
         </div>
@@ -55,4 +76,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
