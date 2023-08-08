@@ -2,21 +2,45 @@ import { useState, useEffect, useRef } from "react";
 import { Web5 } from "@tbd54566975/web5";
 import useNotes from "./hooks/useNotes";
 import Pane from "./components/Pane";
+import Modal from "react-modal";
 import { Note } from "./types/types";
-import {
-  DocumentPlusIcon,
-  TrashIcon,
-  FireIcon,
-} from "@heroicons/react/24/solid";
+
+import { DocumentPlusIcon, FireIcon } from "@heroicons/react/24/outline";
 
 const noteSchema = "http://some-schema-registry.org/notes";
+
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    backgroundColor: "#fff",
+  },
+};
 
 function App() {
   const [did, setDid] = useState<string | null>(null);
   const web5Ref = useRef();
-  const { notes, setNotes, currentNoteText, setCurrentNoteText } = useNotes();
+  const {
+    notes,
+    setNotes,
+    currentNoteText,
+    currentNoteIsPristine,
+    setCurrentNoteText,
+  } = useNotes();
   const [notesAreLoading, setNotesAreLoading] = useState<boolean>(false);
+  const [modalIsOpen, setIsOpen] = useState(false);
 
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
   function processNotes(records): Note[] {
     return Promise.all(
       records.map(async (record) => ({
@@ -43,6 +67,7 @@ function App() {
     setNotes(notes);
   }
 
+  /* Web5 Methods */
   async function saveNote(noteText: string) {
     if (!web5Ref.current) return;
 
@@ -69,6 +94,14 @@ function App() {
     }
   }
 
+  async function deleteRecord(id) {
+    await web5Ref.current.dwn.records.delete({
+      message: {
+        recordId: id,
+      },
+    });
+  }
+
   useEffect(() => {
     async function initWeb5() {
       const { web5, did } = await Web5.connect();
@@ -91,10 +124,17 @@ function App() {
     populateNoteList();
   };
 
-  const handleDeleteNote = () => console.log("note deleted!!");
-  const handleDeleteAllRecords = () => {
-    deleteRecords();
+  const handleDeleteNote = async (id: any) => {
+    await deleteRecord(id);
+    populateNoteList();
   };
+
+  const handleDeleteAllRecords = async () => {
+    closeModal();
+    await deleteRecords();
+    populateNoteList();
+  };
+
   return (
     <main className="bg-app-gray h-screen">
       <header className="flex justify-between">
@@ -110,23 +150,30 @@ function App() {
         </div>
       </header>
       <section className="flex border">
-        <Pane notes={notes} isLoading={notesAreLoading} />
+        <Pane
+          notes={notes}
+          isLoading={notesAreLoading}
+          onDelete={handleDeleteNote}
+        />
         {/* <!-- Right Pane --> */}
         <div className=" flex-1 p-4 bg-white">
           {/* <!-- Toolbar Pane - should be menu element --> */}
-          <menu className="flex flex-row-reverse bg-white rounded-sm shadow-sm  p-2 h-12">
+          <menu className="flex flex-row-reverse justify-between bg-white rounded-sm shadow-sm  p-2 h-12">
             <li className="h-[45px]">
-              <button title="Save" onClick={handleSaveNote}>
-                <DocumentPlusIcon className="h-6 w-6 text-app-yellow  hover:text-yellow-600" />
+              <button
+                title="Save"
+                onClick={handleSaveNote}
+                disabled={currentNoteIsPristine}
+              >
+                {currentNoteIsPristine ? (
+                  <DocumentPlusIcon className="h-6 w-6 text-gray-300" />
+                ) : (
+                  <DocumentPlusIcon className="h-6 w-6 text-app-yellow  hover:text-yellow-600" />
+                )}
               </button>
             </li>
             <li>
-              <button title="Delete" onClick={handleDeleteNote}>
-                <TrashIcon className="h-6 w-6 text-app-yellow hover:text-yellow-600" />
-              </button>
-            </li>
-            <li>
-              <button title="DeleteAll " onClick={handleDeleteAllRecords}>
+              <button title="DeleteAll " onClick={openModal}>
                 <FireIcon className="h-6 w-6 text-red-600 hover:text-red-900" />
               </button>
             </li>
@@ -135,12 +182,37 @@ function App() {
             className="w-full p-4 h-[500px]"
             onChange={handleTextChange}
             value={currentNoteText}
+            placeholder="Enter your note here..."
           />
         </div>
       </section>
-      {/* <div>
-        DID: <div className="w-[400px] overflow-scroll bg-white">{did}</div>
-      </div> */}
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Example Modal"
+      >
+        <h2 className="text-2xl font-bold text-red-600">
+          You sure you want to nuke all your notes?
+        </h2>
+        <div className="flex justify-center align-middle">
+          <img src="/sure-about-that.gif" className="h-[200px] w-auto" />
+        </div>
+        <div className="flex justify-center mt-2">
+          <button
+            className="rounded-md border-2 p-2 text-white bg-red-600 hover:bg-red-900"
+            onClick={handleDeleteAllRecords}
+          >
+            Yes, nuke 'em!
+          </button>
+          <button
+            onClick={closeModal}
+            className="rounded-md border-2 p-2 bg-white text-blue-800"
+          >
+            Cancel
+          </button>
+        </div>
+      </Modal>
     </main>
   );
 }
