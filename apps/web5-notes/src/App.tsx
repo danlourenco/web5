@@ -114,7 +114,7 @@ function App() {
         {/* <!-- Right Pane --> */}
         <div className=" flex-1 p-4 bg-white">
           {/* <!-- Toolbar Pane - should be menu element --> */}
-          <menu className="flex flex-row-reverse bg-white rounded-sm shadow-sm h-[64px] p-2 h-12">
+          <menu className="flex flex-row-reverse bg-white rounded-sm shadow-sm  p-2 h-12">
             <li className="h-[45px]">
               <button title="Save" onClick={handleSaveNote}>
                 <DocumentPlusIcon className="h-6 w-6 text-app-yellow  hover:text-yellow-600" />
