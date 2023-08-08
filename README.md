@@ -1,7 +1,8 @@
 # Web5 Notes
 
 Welcome to Web5 Notes! This is a pnpm monorepo with a sample notes app made to demonstrate some of the basic capabilities of the Web5 JS SDK.
-![localhost_5173_](https://github.com/danlourenco/web5/assets/1965272/a671959a-3563-4e86-9ff6-fe187e53ba92)
+
+![localhost_5173_](https://github.com/danlourenco/web5/assets/1965272/67d0070a-063a-454a-817e-f2d73f083c01)
 
 
 ## Prerequisites
