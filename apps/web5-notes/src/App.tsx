@@ -3,7 +3,11 @@ import { Web5 } from "@tbd54566975/web5";
 import useNotes from "./hooks/useNotes";
 import Pane from "./components/Pane";
 import { Note } from "./types/types";
-import { DocumentPlusIcon, TrashIcon } from "@heroicons/react/24/solid";
+import {
+  DocumentPlusIcon,
+  TrashIcon,
+  FireIcon,
+} from "@heroicons/react/24/solid";
 
 const noteSchema = "http://some-schema-registry.org/notes";
 
@@ -89,44 +93,54 @@ function App() {
 
   const handleDeleteNote = () => console.log("note deleted!!");
   const handleDeleteAllRecords = () => {
-    console.log("gonna delete all records");
     deleteRecords();
   };
   return (
-    <main className="container mx-auto">
-      <h1 className="text-3xl font-bold text-center m-2">Web 5 Notes</h1>
-      <section className="flex h-[500px] border border-gray-800">
+    <main className="bg-app-gray h-screen">
+      <header className="flex justify-between">
+        <h1 className="text-3xl font-bold m-2">
+          <span className="text-app-heading">Web5</span>{" "}
+          <span className="text-app-yellow">Notes</span>
+        </h1>
+        <div
+          title={did}
+          className="w-[400px] text-app-heading overflow-ellipsis whitespace-nowrap overflow-hidden"
+        >
+          DID: {did}
+        </div>
+      </header>
+      <section className="flex border">
         <Pane notes={notes} isLoading={notesAreLoading} />
         {/* <!-- Right Pane --> */}
-        <div className=" flex-1 p-4">
+        <div className=" flex-1 p-4 bg-white">
           {/* <!-- Toolbar Pane - should be menu element --> */}
-          <menu className="flex flex-row-reverse bg-white rounded-sm shadow-sm">
-            <li>
+          <menu className="flex flex-row-reverse bg-white rounded-sm shadow-sm h-[64px] p-2 h-12">
+            <li className="h-[45px]">
               <button title="Save" onClick={handleSaveNote}>
-                <DocumentPlusIcon className="h-6 w-6 text-gray-400  hover:text-gray-800" />
+                <DocumentPlusIcon className="h-6 w-6 text-app-yellow  hover:text-yellow-600" />
               </button>
             </li>
             <li>
               <button title="Delete" onClick={handleDeleteNote}>
-                <TrashIcon className="h-6 w-6 text-gray-400  hover:text-red-600" />
+                <TrashIcon className="h-6 w-6 text-app-yellow hover:text-yellow-600" />
               </button>
             </li>
             <li>
               <button title="DeleteAll " onClick={handleDeleteAllRecords}>
-                Delete All
+                <FireIcon className="h-6 w-6 text-red-600 hover:text-red-900" />
               </button>
             </li>
           </menu>
           <textarea
-            className="w-full border-gray-700 border-2 rounded-md p-4"
+            className="w-full p-4 h-[500px]"
             onChange={handleTextChange}
             value={currentNoteText}
           />
-          <div>
-            DID: <div className="w-[400px] overflow-scroll bg-white">{did}</div>
-          </div>
         </div>
       </section>
+      {/* <div>
+        DID: <div className="w-[400px] overflow-scroll bg-white">{did}</div>
+      </div> */}
     </main>
   );
 }

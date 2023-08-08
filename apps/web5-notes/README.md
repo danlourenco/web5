@@ -25,3 +25,28 @@ If you are developing a production application, we recommend updating the config
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+## Considerations
+
+### Meta frameworks
+
+- Next.js
+- Remix
+
+#### Pros
+
+- Routing would allow easier note navigaiton
+- Good default tooling via CLI
+
+#### Cons
+
+- For purposes of demo, might be a little more complex, need to handle server rendering concerns
+
+### State Management Patterns
+
+- storing the web5 instance
+- useState
+- custom hook
+- Provider pattern
+- useRef
+  - https://medium.com/@prashantblogs/harnessing-the-power-of-useref-in-react-a-guide-to-efficient-state-management-d1766affeaf
