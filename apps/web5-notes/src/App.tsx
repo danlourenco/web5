@@ -7,7 +7,6 @@ import { DocumentPlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 
 const noteSchema = "http://some-schema-registry.org/notes";
 
-const notesArray = [];
 function App() {
   const [did, setDid] = useState<string | null>(null);
   const web5Ref = useRef();
@@ -35,7 +34,6 @@ function App() {
         dateSort: "createdAscending",
       },
     });
-    console.log({ recordQueryResponse });
     setNotesAreLoading(false);
     const notes = await processNotes(recordQueryResponse.records);
     setNotes(notes);
@@ -55,7 +53,6 @@ function App() {
 
   async function deleteRecords() {
     if (!web5Ref.current) return;
-    console.log("is this reachable");
     const { records } = await web5Ref.current.dwn.records.query({
       message: {
         filter: {
@@ -63,9 +60,7 @@ function App() {
         },
       },
     });
-    console.log({ records });
     for (let record of records) {
-      console.log("deleting ", record);
       await record.delete();
     }
   }
