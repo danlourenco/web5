@@ -33,7 +33,11 @@ To get started with the monorepo and run the available scripts, follow these ins
 
 1. Clone the repository:
 
-2. Navigate to the project directory:
+   ```shell
+   git clone https://github.com/danlourenco/web5.git
+   ```
+
+3. Navigate to the project directory:
 
 ```shell
 cd web5
