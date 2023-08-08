@@ -6,12 +6,13 @@ export default function useNotes() {
   const [currentNoteText, setCurrentNoteText] = useState<string>("");
 
   const currentNoteIsPristine = currentNoteText === "";
-
+  const isNotesArrayEmpty = notes.length === 0;
   return {
-    notes,
-    setNotes,
     currentNoteIsPristine,
     currentNoteText,
+    isNotesArrayEmpty,
+    notes,
     setCurrentNoteText,
+    setNotes,
   };
 }

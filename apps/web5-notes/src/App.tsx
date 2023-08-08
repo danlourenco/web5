@@ -29,6 +29,7 @@ function App() {
     setNotes,
     currentNoteText,
     currentNoteIsPristine,
+    isNotesArrayEmpty,
     setCurrentNoteText,
   } = useNotes();
   const [notesAreLoading, setNotesAreLoading] = useState<boolean>(false);
@@ -135,6 +136,7 @@ function App() {
     populateNoteList();
   };
 
+  console.log(notes);
   return (
     <main className="bg-app-gray h-screen">
       <header className="flex justify-between">
@@ -173,8 +175,16 @@ function App() {
               </button>
             </li>
             <li>
-              <button title="DeleteAll " onClick={openModal}>
-                <FireIcon className="h-6 w-6 text-red-600 hover:text-red-900" />
+              <button
+                title="DeleteAll"
+                disabled={isNotesArrayEmpty}
+                onClick={openModal}
+              >
+                {isNotesArrayEmpty ? (
+                  <FireIcon className="h-6 w-6 text-gray-300" />
+                ) : (
+                  <FireIcon className="h-6 w-6 text-red-600 hover:text-red-900" />
+                )}
               </button>
             </li>
           </menu>

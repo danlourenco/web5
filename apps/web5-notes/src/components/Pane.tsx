@@ -25,7 +25,7 @@ export default function Pane({ notes, isLoading, onDelete }: PaneProps) {
       ) : (
         <ul>
           {notes.map((note: Note) => (
-            <PaneItem note={note} onDelete={onDelete} />
+            <PaneItem note={note} onDelete={onDelete} key={note.id} />
           ))}
         </ul>
       )}

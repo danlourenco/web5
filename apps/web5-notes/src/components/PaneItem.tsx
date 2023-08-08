@@ -8,7 +8,6 @@ interface PaneItemProps {
 export default function PaneItem({ note, selected, onDelete }: PaneItemProps) {
   return (
     <li
-      key={note.id}
       className={`h-[100px] py-4 px-8 bg-white border-b border-darker-gray ${
         selected ? "bg-yellow-400" : ""
       } hover:bg-gray-400 hover:cursor-pointer flex flex-row`}
