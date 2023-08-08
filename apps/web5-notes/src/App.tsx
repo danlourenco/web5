@@ -1,79 +1,139 @@
-import { useState, useEffect } from 'react';
-import useWeb5 from "./hooks/useWeb5";
+import { useState, useEffect, useRef } from "react";
+import { Web5 } from "@tbd54566975/web5";
+import useNotes from "./hooks/useNotes";
 import Pane from "./components/Pane";
+import { Note } from "./types/types";
+import { DocumentPlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 
+const noteSchema = "http://some-schema-registry.org/notes";
+
+const notesArray = [];
 function App() {
-  const { web5, did } = useWeb5();
-  const [noteText, setNoteText] = useState('');
-  // const notesArray = [];
-  const [notes, updateNotes] = useState([]);
+  const [did, setDid] = useState<string | null>(null);
+  const web5Ref = useRef();
+  const { notes, setNotes, currentNoteText, setCurrentNoteText } = useNotes();
+  const [notesAreLoading, setNotesAreLoading] = useState<boolean>(false);
 
-  const initialize = async (web5) => {
-    if (!web5) return;
-    const response = await web5.dwn.records.query({
+  function processNotes(records): Note[] {
+    return Promise.all(
+      records.map(async (record) => ({
+        data: await record.data.text(),
+        id: record.id,
+        record,
+      }))
+    );
+  }
+
+  async function populateNoteList() {
+    if (!web5Ref.current) return;
+    setNotesAreLoading(true);
+    const recordQueryResponse = await web5Ref.current.dwn.records.query({
       message: {
         filter: {
-          schema: 'http://some-schema-registry.org/notes'
+          schema: noteSchema,
         },
-        dateSort: 'createdAscending'
-      }
+        dateSort: "createdAscending",
+      },
     });
+    console.log({ recordQueryResponse });
+    setNotesAreLoading(false);
+    const notes = await processNotes(recordQueryResponse.records);
+    setNotes(notes);
+  }
 
-    updateNotes(
-      response.records
-    );
-    console.log(notes);
+  async function saveNote(noteText: string) {
+    if (!web5Ref.current) return;
 
-    // response.records.forEach(record => {
-    //   // notesArray.push(record)
-    //   updateNotes( record => [])
-    // })
+    await web5Ref.current.dwn.records.create({
+      data: noteText,
+      message: {
+        schema: noteSchema,
+        dataFormat: "text/plain",
+      },
+    });
+  }
+
+  async function deleteRecords() {
+    if (!web5Ref.current) return;
+    console.log("is this reachable");
+    const { records } = await web5Ref.current.dwn.records.query({
+      message: {
+        filter: {
+          schema: noteSchema,
+        },
+      },
+    });
+    console.log({ records });
+    for (let record of records) {
+      console.log("deleting ", record);
+      await record.delete();
+    }
   }
 
   useEffect(() => {
-    initialize(web5);
-    console.log('useEffect called')
-  }, [])
-
-  const saveNote = async (noteData, web5Instance, destinationArray) => {
-    const { record } = await web5Instance.dwn.records.create({
-      data: noteData,
-      message: {
-        schema: 'http://some-schema-registry.org/notes',
-        dataFormat: 'text/plain'
-      }
+    async function initWeb5() {
+      const { web5, did } = await Web5.connect();
+      setDid(did);
+      // use this web5Ref to make calls
+      web5Ref.current = web5;
+    }
+    initWeb5().then(() => {
+      populateNoteList();
     });
+  }, []);
 
-    const data = await record.data.text();
-    const note = { record, data, id: record.id };
-    destinationArray.push(note);
-    console.log(note)
-  }
-  const handleTextChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => setNoteText(value);
+  const handleTextChange = ({
+    target: { value },
+  }: React.ChangeEvent<HTMLTextAreaElement>) => setCurrentNoteText(value);
+
   const handleSaveNote = async () => {
-    await saveNote(noteText, web5, notes);
-  }
-  const handleDeleteNote = () => console.log('note deleted!!');
+    await saveNote(currentNoteText);
+    setCurrentNoteText("");
+    populateNoteList();
+  };
 
+  const handleDeleteNote = () => console.log("note deleted!!");
+  const handleDeleteAllRecords = () => {
+    console.log("gonna delete all records");
+    deleteRecords();
+  };
   return (
     <main className="container mx-auto">
-      <h1 className="text-3xl font-bold text-center m-2">
-        Web 5 Notes
-      </h1>
-      <section className="flex h-[500px]">
-        <Pane notes={notes} />
+      <h1 className="text-3xl font-bold text-center m-2">Web 5 Notes</h1>
+      <section className="flex h-[500px] border border-gray-800">
+        <Pane notes={notes} isLoading={notesAreLoading} />
         {/* <!-- Right Pane --> */}
-        <div className="bg-blue-100 flex-1 p-4">
+        <div className=" flex-1 p-4">
           {/* <!-- Toolbar Pane - should be menu element --> */}
           <menu className="flex flex-row-reverse bg-white rounded-sm shadow-sm">
-            <li><button title="Save " className="bg-blue-300 rounded-sm" onClick={handleSaveNote}>Save</button></li>
-            <li><button title="Delete " className="bg-red-200 rounded-sm" onClick={handleDeleteNote}>Delete</button></li>
+            <li>
+              <button title="Save" onClick={handleSaveNote}>
+                <DocumentPlusIcon className="h-6 w-6 text-gray-400  hover:text-gray-800" />
+              </button>
+            </li>
+            <li>
+              <button title="Delete" onClick={handleDeleteNote}>
+                <TrashIcon className="h-6 w-6 text-gray-400  hover:text-red-600" />
+              </button>
+            </li>
+            <li>
+              <button title="DeleteAll " onClick={handleDeleteAllRecords}>
+                Delete All
+              </button>
+            </li>
           </menu>
-          <textarea className="w-full border-gray-700 border-2 rounded-md p-4" onChange={handleTextChange} value={noteText} />
+          <textarea
+            className="w-full border-gray-700 border-2 rounded-md p-4"
+            onChange={handleTextChange}
+            value={currentNoteText}
+          />
+          <div>
+            DID: <div className="w-[400px] overflow-scroll bg-white">{did}</div>
+          </div>
         </div>
       </section>
     </main>
-  )
+  );
 }
 
 export default App;
