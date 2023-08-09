@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+import Modal from "react-modal";
 import { Web5 } from "@tbd54566975/web5";
+
 import useNotes from "./hooks/useNotes";
 import Pane from "./components/Pane";
-import Modal from "react-modal";
 import { Note } from "./types/types";
 
-import { DocumentPlusIcon, FireIcon } from "@heroicons/react/24/outline";
+import { PencilSquareIcon, FireIcon } from "@heroicons/react/24/outline";
 
 const noteSchema = "http://some-schema-registry.org/notes";
 
@@ -139,7 +140,7 @@ function App() {
   return (
     <main className="bg-app-gray h-screen">
       <header className="flex justify-between">
-        <h1 className="text-3xl font-bold m-2">
+        <h1 className="text-3xl font-bold m-2 px-2">
           <span className="text-app-heading">Web5</span>{" "}
           <span className="text-app-yellow">Notes</span>
         </h1>
@@ -167,9 +168,9 @@ function App() {
                 disabled={currentNoteIsPristine}
               >
                 {currentNoteIsPristine ? (
-                  <DocumentPlusIcon className="h-6 w-6 text-gray-300" />
+                  <PencilSquareIcon className="h-6 w-6 text-gray-300" />
                 ) : (
-                  <DocumentPlusIcon className="h-6 w-6 text-app-yellow  hover:text-yellow-600" />
+                  <PencilSquareIcon className="h-6 w-6 text-app-yellow  hover:text-yellow-600" />
                 )}
               </button>
             </li>
