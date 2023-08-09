@@ -1,15 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Modal from "react-modal";
-import { Web5 } from "@tbd54566975/web5";
 
 import useNotes from "./hooks/useNotes";
 import Pane from "./components/Pane";
 import Header from "./components/Header";
-import { Note } from "./types/types";
 
 import { PencilSquareIcon, FireIcon } from "@heroicons/react/24/outline";
-
-const noteSchema = "http://some-schema-registry.org/notes";
 
 const customStyles = {
   content: {
@@ -24,18 +20,13 @@ const customStyles = {
 };
 
 function App() {
-  const [did, setDid] = useState<string | undefined>(undefined);
-  const web5Ref = useRef();
-  const {
-    notes,
-    setNotes,
-    currentNoteText,
-    currentNoteIsPristine,
-    isNotesArrayEmpty,
-    setCurrentNoteText,
-  } = useNotes();
-  const [notesAreLoading, setNotesAreLoading] = useState<boolean>(false);
+  const { notes, saveNote, notesAreLoading, deleteRecord, deleteRecords } =
+    useNotes();
+
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [currentNoteText, setCurrentNoteText] = useState<string>("");
+  const currentNoteIsPristine = currentNoteText === "";
+  const isNotesArrayEmpty = notes.length === 0;
 
   function openModal() {
     setIsOpen(true);
@@ -45,81 +36,6 @@ function App() {
     setIsOpen(false);
   }
 
-  function processNotes(records): Promise<Note[]> {
-    return Promise.all(
-      records.map(async (record) => ({
-        data: await record.data.text(),
-        id: record.id,
-        record,
-      }))
-    );
-  }
-
-  async function populateNoteList() {
-    if (!web5Ref.current) return;
-    setNotesAreLoading(true);
-    // @ts-ignore
-    const recordQueryResponse = await web5Ref.current.dwn.records.query({
-      message: {
-        filter: {
-          schema: noteSchema,
-        },
-        dateSort: "createdAscending",
-      },
-    });
-    setNotesAreLoading(false);
-    const notes = await processNotes(recordQueryResponse.records);
-    setNotes(notes);
-  }
-
-  /* Web5 Methods */
-  async function saveNote(noteText: string) {
-    if (!web5Ref.current) return;
-
-    await web5Ref.current.dwn.records.create({
-      data: noteText,
-      message: {
-        schema: noteSchema,
-        dataFormat: "text/plain",
-      },
-    });
-  }
-
-  async function deleteRecords() {
-    if (!web5Ref.current) return;
-    const { records } = await web5Ref.current.dwn.records.query({
-      message: {
-        filter: {
-          schema: noteSchema,
-        },
-      },
-    });
-    for (let record of records) {
-      await record.delete();
-    }
-  }
-
-  async function deleteRecord(id: string) {
-    // @ts-ignore
-    await web5Ref.current.dwn.records.delete({
-      message: {
-        recordId: id,
-      },
-    });
-  }
-
-  useEffect(() => {
-    async function initWeb5() {
-      const { web5, did } = await Web5.connect();
-      setDid(did);
-      // use this web5Ref to make calls
-      web5Ref.current = web5;
-    }
-    initWeb5().then(() => {
-      populateNoteList();
-    });
-  }, []);
-
   const handleTextChange = ({
     target: { value },
   }: React.ChangeEvent<HTMLTextAreaElement>) => setCurrentNoteText(value);
@@ -127,18 +43,15 @@ function App() {
   const handleSaveNote = async () => {
     await saveNote(currentNoteText);
     setCurrentNoteText("");
-    populateNoteList();
   };
 
   const handleDeleteNote = async (id: any) => {
     await deleteRecord(id);
-    populateNoteList();
   };
 
   const handleDeleteAllRecords = async () => {
     closeModal();
     await deleteRecords();
-    populateNoteList();
   };
 
   return (
