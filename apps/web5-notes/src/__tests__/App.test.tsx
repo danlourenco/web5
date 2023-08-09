@@ -1,8 +1,13 @@
 import { describe, it, expect } from "vitest";
-
+import { render, screen } from "@testing-library/react";
+import App from "../App";
 // Tests
-describe("Renders main page correctly", async () => {
-  it("Should render the page correctly", async () => {
-    expect(true).toBeTruthy();
+describe("App", () => {
+  it("renders the title", () => {
+    render(<App />);
+    const title = screen.getByRole("heading", {
+      name: "Web5 Notes",
+    });
+    expect(title).toBeInTheDocument();
   });
 });
