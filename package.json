@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev:notes": "pnpm --filter web5-notes dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "notes:dev": "pnpm --filter web5-notes dev",
+    "notes:test": "pnpm --filter web5-notes test"
   },
   "keywords": [],
   "author": "Dan Lourenço",
