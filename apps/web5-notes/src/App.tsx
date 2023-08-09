@@ -4,6 +4,7 @@ import { Web5 } from "@tbd54566975/web5";
 
 import useNotes from "./hooks/useNotes";
 import Pane from "./components/Pane";
+import Header from "./components/Header";
 import { Note } from "./types/types";
 
 import { PencilSquareIcon, FireIcon } from "@heroicons/react/24/outline";
@@ -23,7 +24,7 @@ const customStyles = {
 };
 
 function App() {
-  const [did, setDid] = useState<string | null>(null);
+  const [did, setDid] = useState<string | undefined>(undefined);
   const web5Ref = useRef();
   const {
     notes,
@@ -98,7 +99,8 @@ function App() {
     }
   }
 
-  async function deleteRecord(id) {
+  async function deleteRecord(id: string) {
+    // @ts-ignore
     await web5Ref.current.dwn.records.delete({
       message: {
         recordId: id,
@@ -141,18 +143,7 @@ function App() {
 
   return (
     <main className="bg-app-gray h-screen">
-      <header className="flex justify-between">
-        <h1 className="text-3xl font-bold m-2 px-2">
-          <span className="text-app-heading">Web5</span>{" "}
-          <span className="text-app-yellow">Notes</span>
-        </h1>
-        <div
-          title={did}
-          className="w-[400px] text-app-heading overflow-ellipsis whitespace-nowrap overflow-hidden"
-        >
-          DID: {did}
-        </div>
-      </header>
+      <Header />
       <section className="flex border">
         <Pane
           notes={notes}
@@ -176,29 +167,20 @@ function App() {
                 )}
               </button>
             </li>
-            <li>
-              <button
-                title="DeleteAll"
-                disabled={isNotesArrayEmpty}
-                onClick={openModal}
-              >
-                {isNotesArrayEmpty ? (
-                  <FireIcon className="h-6 w-6 text-gray-300" />
-                ) : (
-                  <FireIcon className="h-6 w-6 text-red-600 hover:text-red-900" />
-                )}
-              </button>
-            </li>
           </menu>
 
           <textarea
-            className="w-full p-4 h-[500px]"
+            autoFocus
+            className="w-full p-4 h-[500px] resize-none"
             onChange={handleTextChange}
             value={currentNoteText}
             placeholder="Enter your note here..."
+            name="Note Text"
+            data-testid="note-text"
           />
         </div>
       </section>
+
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -226,6 +208,19 @@ function App() {
           </button>
         </div>
       </Modal>
+      <div className="p-4">
+        <button
+          title="DeleteAll"
+          disabled={isNotesArrayEmpty}
+          onClick={openModal}
+        >
+          {isNotesArrayEmpty ? (
+            <FireIcon className="h-6 w-6 text-gray-300" />
+          ) : (
+            <FireIcon className="h-6 w-6 text-red-600 hover:text-red-900" />
+          )}
+        </button>
+      </div>
     </main>
   );
 }
