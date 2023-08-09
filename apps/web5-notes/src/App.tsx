@@ -136,7 +136,6 @@ function App() {
     populateNoteList();
   };
 
-  console.log(notes);
   return (
     <main className="bg-app-gray h-screen">
       <header className="flex justify-between">
