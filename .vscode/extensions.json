@@ -1,7 +1,6 @@
 {
     "recommendations": [
         "bradlc.vscode-tailwindcss",
-        "zixuanchen.vitest-explorer",
-        "ms-playwright.playwright"
+        "zixuanchen.vitest-explorer"
     ]
 }
