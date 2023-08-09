@@ -97,7 +97,7 @@ export default function useNotes() {
     deleteRecords,
     notes,
     notesAreLoading,
-    setNotes,
     saveNote,
+    setNotes,
   };
 }
