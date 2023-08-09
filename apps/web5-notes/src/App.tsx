@@ -152,7 +152,6 @@ function App() {
         />
         {/* <!-- Right Pane --> */}
         <div className=" flex-1 p-4 bg-white">
-          {/* <!-- Toolbar Pane - should be menu element --> */}
           <menu className="flex flex-row-reverse justify-between bg-white rounded-sm shadow-sm  p-2 h-12">
             <li className="h-[45px]">
               <button
@@ -175,7 +174,6 @@ function App() {
             onChange={handleTextChange}
             value={currentNoteText}
             placeholder="Enter your note here..."
-            name="Note Text"
             data-testid="note-text"
           />
         </div>
