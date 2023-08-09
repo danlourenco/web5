@@ -43,7 +43,8 @@ function App() {
   function closeModal() {
     setIsOpen(false);
   }
-  function processNotes(records): Note[] {
+
+  function processNotes(records): Promise<Note[]> {
     return Promise.all(
       records.map(async (record) => ({
         data: await record.data.text(),
@@ -56,6 +57,7 @@ function App() {
   async function populateNoteList() {
     if (!web5Ref.current) return;
     setNotesAreLoading(true);
+    // @ts-ignore
     const recordQueryResponse = await web5Ref.current.dwn.records.query({
       message: {
         filter: {
@@ -188,6 +190,7 @@ function App() {
               </button>
             </li>
           </menu>
+
           <textarea
             className="w-full p-4 h-[500px]"
             onChange={handleTextChange}

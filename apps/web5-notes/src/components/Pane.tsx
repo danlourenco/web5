@@ -4,7 +4,7 @@ import { Note } from "../types/types";
 interface PaneProps {
   notes: Note[];
   isLoading: boolean;
-  onDelete: any;
+  onDelete: (id: any) => void;
 }
 export default function Pane({ notes, isLoading, onDelete }: PaneProps) {
   return (

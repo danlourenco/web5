@@ -3,7 +3,7 @@ import { Note } from "../types/types";
 interface PaneItemProps {
   note: Note;
   selected?: boolean;
-  onDelete: any;
+  onDelete: (id: string) => void;
 }
 export default function PaneItem({ note, selected, onDelete }: PaneItemProps) {
   return (
