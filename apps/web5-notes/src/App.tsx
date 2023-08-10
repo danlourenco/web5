@@ -20,11 +20,21 @@ const customStyles = {
 };
 
 function App() {
-  const { notes, saveNote, notesAreLoading, deleteRecord, deleteRecords } =
-    useNotes();
+  const {
+    notes,
+    saveNote,
+    notesAreLoading,
+    deleteRecord,
+    deleteRecords,
+    updateRecord,
+    readRecord,
+    selectedNoteId,
+    setSelectedNoteId,
+  } = useNotes();
 
   const [modalIsOpen, setIsOpen] = useState(false);
   const [currentNoteText, setCurrentNoteText] = useState<string>("");
+
   const currentNoteIsPristine = currentNoteText === "";
   const isNotesArrayEmpty = notes.length === 0;
 
@@ -41,17 +51,36 @@ function App() {
   }: React.ChangeEvent<HTMLTextAreaElement>) => setCurrentNoteText(value);
 
   const handleSaveNote = async () => {
-    await saveNote(currentNoteText);
+    if (selectedNoteId) {
+      await updateRecord(selectedNoteId, currentNoteText);
+    } else {
+      await saveNote(currentNoteText);
+    }
     setCurrentNoteText("");
+    setSelectedNoteId(null);
+  };
+
+  const handleNoteSelection = async (id: string) => {
+    const record = await readRecord(id);
+    const noteText = await record.data.text();
+    setSelectedNoteId(record.id);
+    setCurrentNoteText(noteText);
   };
 
   const handleDeleteNote = async (id: any) => {
     await deleteRecord(id);
+    if (selectedNoteId === id) {
+      setCurrentNoteText("");
+      setSelectedNoteId(null);
+    }
   };
 
   const handleDeleteAllRecords = async () => {
     closeModal();
+
     await deleteRecords();
+    setSelectedNoteId(null);
+    setCurrentNoteText("");
   };
 
   return (
@@ -62,6 +91,7 @@ function App() {
           notes={notes}
           isLoading={notesAreLoading}
           onDelete={handleDeleteNote}
+          onSelection={handleNoteSelection}
         />
         {/* <!-- Right Pane --> */}
         <div className=" flex-1 p-4 bg-white">

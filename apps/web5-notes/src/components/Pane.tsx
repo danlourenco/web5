@@ -4,9 +4,15 @@ import { Note } from "../types/types";
 interface PaneProps {
   notes: Note[];
   isLoading: boolean;
+  onSelection: (id: string) => void;
   onDelete: (id: any) => void;
 }
-export default function Pane({ notes, isLoading, onDelete }: PaneProps) {
+export default function Pane({
+  notes,
+  isLoading,
+  onSelection,
+  onDelete,
+}: PaneProps) {
   return (
     <div
       className="bg-[#f5f5f7] flex-2 p-4 w-1/3 border-r border-darker-gray"
@@ -28,7 +34,12 @@ export default function Pane({ notes, isLoading, onDelete }: PaneProps) {
       ) : (
         <ul data-testid="notes-container">
           {notes.map((note: Note) => (
-            <PaneItem note={note} onDelete={onDelete} key={note.id} />
+            <PaneItem
+              key={note.id}
+              note={note}
+              onDelete={onDelete}
+              onSelection={onSelection}
+            />
           ))}
         </ul>
       )}

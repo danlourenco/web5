@@ -9,6 +9,7 @@ export default function useNotes() {
   const [did, setDid] = useState<string | undefined>(undefined);
   const [notes, setNotes] = useState<Note[]>([]);
   const [notesAreLoading, setNotesAreLoading] = useState<boolean>(false);
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
 
   function processNotes(records): Promise<Note[]> {
     return Promise.all(
@@ -19,6 +20,8 @@ export default function useNotes() {
       }))
     );
   }
+
+  // TODO: update to use useCallback to clean up populateNoteList() calls
 
   async function populateNoteList() {
     if (!web5Ref.current) return;
@@ -51,6 +54,41 @@ export default function useNotes() {
     populateNoteList();
   }
 
+  async function updateRecord(recordId: string, data: string) {
+    if (!web5Ref.current) return;
+    // @ts-ignore
+    const { record } = await web5Ref.current.dwn.records.read({
+      message: {
+        recordId,
+      },
+    });
+    await record.update({ data });
+
+    populateNoteList();
+  }
+
+  async function readRecord(recordId: string) {
+    if (!web5Ref.current) return;
+    // @ts-ignore
+    const { record } = await web5Ref.current.dwn.records.read({
+      message: {
+        recordId,
+      },
+    });
+    return record;
+  }
+
+  async function deleteRecord(id: string) {
+    // @ts-ignore
+    await web5Ref.current.dwn.records.delete({
+      message: {
+        recordId: id,
+      },
+    });
+
+    populateNoteList();
+  }
+
   async function deleteRecords() {
     if (!web5Ref.current) return;
     // @ts-ignore
@@ -68,17 +106,6 @@ export default function useNotes() {
     populateNoteList();
   }
 
-  async function deleteRecord(id: string) {
-    // @ts-ignore
-    await web5Ref.current.dwn.records.delete({
-      message: {
-        recordId: id,
-      },
-    });
-
-    populateNoteList();
-  }
-
   useEffect(() => {
     async function initWeb5() {
       const { web5, did } = await Web5.connect();
@@ -92,6 +119,8 @@ export default function useNotes() {
   }, []);
 
   return {
+    updateRecord,
+    readRecord,
     deleteRecord,
     deleteRecords,
     did,
@@ -99,5 +128,7 @@ export default function useNotes() {
     notesAreLoading,
     saveNote,
     setNotes,
+    selectedNoteId,
+    setSelectedNoteId,
   };
 }
