@@ -56,6 +56,6 @@ The following scripts are available for running specific tasks within the monore
 
 - `pnpm notes:dev`: Runs the React web5-notes application in development mode
 
-- `pnpm notes:dev`: Runs the unit/component tests via Vitest
+- `pnpm notes:test`: Runs the unit/component tests via Vitest
 
 - `pnpm notes:journey`: Runs the Playwright user journey tests
