@@ -8,7 +8,6 @@ export default function useNotes() {
   const web5Ref = useRef();
   const [did, setDid] = useState<string | undefined>(undefined);
   const [notes, setNotes] = useState<Note[]>([]);
-  const [currentNoteText, setCurrentNoteText] = useState<string>("");
   const [notesAreLoading, setNotesAreLoading] = useState<boolean>(false);
 
   function processNotes(records): Promise<Note[]> {
@@ -95,6 +94,7 @@ export default function useNotes() {
   return {
     deleteRecord,
     deleteRecords,
+    did,
     notes,
     notesAreLoading,
     saveNote,

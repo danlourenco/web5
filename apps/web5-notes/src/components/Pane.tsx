@@ -8,7 +8,10 @@ interface PaneProps {
 }
 export default function Pane({ notes, isLoading, onDelete }: PaneProps) {
   return (
-    <div className="bg-[#f5f5f7] flex-2 p-4 w-1/3 border-r border-darker-gray">
+    <div
+      className="bg-[#f5f5f7] flex-2 p-4 w-1/3 border-r border-darker-gray"
+      data-testid="notes-pane"
+    >
       <div className="h-[64px]">
         <input
           type="text"
@@ -23,7 +26,7 @@ export default function Pane({ notes, isLoading, onDelete }: PaneProps) {
           {isLoading ? "Loading..." : "No notes yet"}
         </div>
       ) : (
-        <ul>
+        <ul data-testid="notes-container">
           {notes.map((note: Note) => (
             <PaneItem note={note} onDelete={onDelete} key={note.id} />
           ))}

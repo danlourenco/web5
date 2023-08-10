@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "notes:dev": "pnpm --filter web5-notes dev",
-    "notes:test": "pnpm --filter web5-notes test"
+    "notes:test": "pnpm --filter web5-notes test",
+    "notes:journey": "pnpm --filter web5-notes test:journey"
   },
   "keywords": [],
   "author": "Dan Lourenço",

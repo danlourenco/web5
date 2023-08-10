@@ -4,7 +4,6 @@ Welcome to Web5 Notes! This is a pnpm monorepo with a sample notes app made to d
 
 ![localhost_5173_](https://github.com/danlourenco/web5/assets/1965272/67d0070a-063a-454a-817e-f2d73f083c01)
 
-
 ## Prerequisites
 
 Before you begin, ensure that you have the following installed on your local machine:
@@ -37,7 +36,7 @@ To get started with the monorepo and run the available scripts, follow these ins
    git clone https://github.com/danlourenco/web5.git
    ```
 
-3. Navigate to the project directory:
+2. Navigate to the project directory:
 
 ```shell
 cd web5
@@ -55,4 +54,8 @@ pnpm install
 
 The following scripts are available for running specific tasks within the monorepo:
 
-- `pnpm dev:notes`: Runs the React web5-notes application in development mode
+- `pnpm notes:dev`: Runs the React web5-notes application in development mode
+
+- `pnpm notes:dev`: Runs the unit/component tests via Vitest
+
+- `pnpm notes:journey`: Runs the Playwright user journey tests

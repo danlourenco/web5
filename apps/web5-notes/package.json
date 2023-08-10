@@ -9,7 +9,9 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "test:journey": "pnpm exec playwright test",
+    "test:journey:ui": "pnpm exec playwright test --ui"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",

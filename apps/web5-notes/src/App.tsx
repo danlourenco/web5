@@ -68,6 +68,7 @@ function App() {
           <menu className="flex flex-row-reverse justify-between bg-white rounded-sm shadow-sm  p-2 h-12">
             <li className="h-[45px]">
               <button
+                name="Save"
                 title="Save"
                 onClick={handleSaveNote}
                 disabled={currentNoteIsPristine}

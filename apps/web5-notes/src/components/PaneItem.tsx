@@ -12,7 +12,10 @@ export default function PaneItem({ note, selected, onDelete }: PaneItemProps) {
         selected ? "bg-yellow-400" : ""
       } hover:bg-gray-400 hover:cursor-pointer flex flex-row`}
     >
-      <div className="text-[17px] font-semibold font-sans w-4/5">
+      <div
+        className="text-[17px] font-semibold font-sans w-4/5"
+        data-testid="note-text"
+      >
         {note.data}
       </div>
       <div className="w-1/5 flex justify-end">
