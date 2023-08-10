@@ -32,9 +32,9 @@ To get started with the monorepo and run the available scripts, follow these ins
 
 1. Clone the repository:
 
-   ```shell
-   git clone https://github.com/danlourenco/web5.git
-   ```
+```shell
+git clone https://github.com/danlourenco/web5.git
+```
 
 2. Navigate to the project directory:
 
