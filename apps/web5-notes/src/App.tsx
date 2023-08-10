@@ -1,11 +1,10 @@
 import { useState } from "react";
 import Modal from "react-modal";
+import { PencilSquareIcon, FireIcon } from "@heroicons/react/24/outline";
 
 import useNotes from "./hooks/useNotes";
 import Pane from "./components/Pane";
 import Header from "./components/Header";
-
-import { PencilSquareIcon, FireIcon } from "@heroicons/react/24/outline";
 
 const customStyles = {
   content: {
