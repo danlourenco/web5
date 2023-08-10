@@ -5,6 +5,7 @@ test('has title', async ({ page }) => {
     await expect(page).toHaveTitle('Web5 Notes');
 });
 
+// TODO: flesh out journey tests, test CRUD operations
 test('can add a note', async({ page }) => {
     await page.goto('/')
     expect(page.getByTestId("notes-pane")).toContainText("No notes yet");
@@ -13,5 +14,4 @@ test('can add a note', async({ page }) => {
         name: "Save"
     }).click();
     await page.waitForTimeout(3000);
-
 });
