@@ -22,7 +22,6 @@ export default function useNotes() {
   }
 
   // TODO: update to use useCallback to clean up populateNoteList() calls
-
   async function populateNoteList() {
     if (!web5Ref.current) return;
     setNotesAreLoading(true);
