@@ -39,6 +39,7 @@ export default function useNotes() {
     setNotesAreLoading(false);
   }
 
+  // TODO: update naming to align with existing fn names (createRecord)
   async function saveNote(noteText: string) {
     if (!web5Ref.current) return;
     // @ts-ignore
