@@ -16,6 +16,10 @@ Other than the top-level `<App />` component, the application is broken up into 
 
 ## Key Files
 
+### src/App.tsx
+
+This is where the magic happens. Our application is composed here of event handler, local state, our `useNotes` hook exports, and our components.
+
 ### src/hooks/useNotes.tsx
 
 The `useNotes` hook is responsible for:
@@ -27,6 +31,10 @@ The `useNotes` hook is responsible for:
 
 - establishing Web5 CRUD functions and the handler functions that call them
 
-### src/App.tsx
+### src/tests
 
-- coming soon
+- Our Vitest unit tests live here.
+
+### ../journey
+
+- Our playwright journey tests live here.

@@ -6,6 +6,7 @@ import useNotes from "./hooks/useNotes";
 import Pane from "./components/Pane";
 import Header from "./components/Header";
 
+// For modal
 const customStyles = {
   content: {
     top: "50%",
@@ -85,6 +86,7 @@ function App() {
   return (
     <main className="bg-app-gray h-screen">
       <Header />
+      {/* <!-- Left Pane --> */}
       <section className="flex border">
         <Pane
           notes={notes}
